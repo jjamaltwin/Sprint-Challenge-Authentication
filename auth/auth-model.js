@@ -10,9 +10,14 @@ function findBy(username) {
     return db('users').where(username);
 }
 
+function find() {
+    return db('users').where(username);
+}
+
 
 
 module.exports = {
     add,
-    findBy
+    findBy,
+    find
 }
