@@ -1,6 +1,7 @@
 const Users = require('./auth-model')
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
+require('dotenv').config();
 
 
 module.exports = (req, res, next) => {
@@ -8,6 +9,7 @@ module.exports = (req, res, next) => {
   if (tokenHeader) {
     jwt.verify(tokenHeader, process.env.SECRET , (err, decodedToken) => {
       if (err) {
+        console.log(err);
         res.status(401).json({message: "bad auth"})
       } else {
         req.decodedJwt = decodedToken;

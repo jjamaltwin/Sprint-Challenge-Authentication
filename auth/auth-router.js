@@ -5,7 +5,8 @@ const db = require('../database/dbConfig')
 const bcrypt = require('bcrypt')
 const restricted = require('./authenticate-middleware')
 const jwt = require('jsonwebtoken')
-const authenticate = require('../auth/authenticate-middleware');
+const authenticate = require('../auth/authenticate-middleware')
+require('dotenv').config();
 
 
 
