@@ -3,7 +3,9 @@ const router = express.Router()
 const Users = require('./auth-model')
 const db = require('../database/dbConfig')
 const bcrypt = require('bcrypt')
-const restricted = require('./authenticate-middleware');
+const restricted = require('./authenticate-middleware')
+const jwt = require('jsonwebtoken')
+const authenticate = require('../auth/authenticate-middleware');
 
 
 
@@ -32,8 +34,9 @@ router.post('/login', validate, (req, res) => {
     .then(user => {
       console.log(user);
       if(user && bcrypt.compareSync(password, user.password)) {
-         req.session.user = user; 
-         res.status(200).json({message: `Welcome ${req.session.user.username}!`})
+        const token = generateToken(user);
+         //req.session.user = user; 
+         res.status(200).json({message: `Welcome ${user.username}!`, token})
       } else {
         
           res.status(400).json({message: "Invalid Credentials"});
@@ -45,9 +48,22 @@ router.post('/login', validate, (req, res) => {
 });
 
 
+function generateToken(user) {
+  const payload = {
+    subject: user.id,
+    username: user.username
+  }
+  const secret = process.env.SECRET || "$$$$$$$$"
+const options = {
+  expiresIn: '1h'
+}
+return jwt.sign(payload, secret, options);
+};
+
+
 // USERS
 
-router.get("/users", restricted, (req, res) => {
+router.get("/users", restricted, authenticate, (req, res) => {
   Users.find()
   .then(users => {
       res.json(users);

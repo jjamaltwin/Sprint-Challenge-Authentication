@@ -1,5 +1,23 @@
 const Users = require('./auth-model')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken');
+
+
+module.exports = (req, res, next) => {
+  const tokenHeader = req.headers.authorization;
+  if (tokenHeader) {
+    jwt.verify(tokenHeader, process.env.SECRET , (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "bad auth"})
+      } else {
+        req.decodedJwt = decodedToken;
+        next();
+      }
+    })
+  } else {
+  res.status(401).json({ you: 'shall not pass!' });
+  }
+};
 
 module.exports = function restriction (req, res, next)  {
   const {username, password}  = req.headers;
